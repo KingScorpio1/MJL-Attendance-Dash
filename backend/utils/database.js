@@ -1,12 +1,17 @@
+// File: backend/utils/database.js
+
 const { Pool } = require('pg');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  // Optional: SSL configuration for production environments like Heroku
-  // ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  // --- THIS IS THE FIX ---
+  // If we are in production (Render), enable SSL
+  ssl: process.env.NODE_ENV === 'production' ? {
+    rejectUnauthorized: false // This allows Render's self-signed certificates
+  } : false,
 });
 
-// Add error handling for pool connections
+// Error handling for the pool
 pool.on('error', (err, client) => {
   console.error('Unexpected error on idle PostgreSQL client', err);
   process.exit(-1);
