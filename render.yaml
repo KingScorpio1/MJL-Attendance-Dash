@@ -1,0 +1,37 @@
+# This blueprint is based on the official Render documentation structure.
+
+# We define the services and databases separately.
+# Render is smart enough to create the database before the web service that depends on it.
+
+services:
+  # This is your Node.js Web Service (Backend + Frontend)
+  - type: web
+    name: teacher-attendance-app
+    runtime: node
+    plan: free
+    
+    # --- Build and Start Configuration ---
+    # All commands run from the 'backend' directory
+    rootDir: backend
+    buildCommand: "npm install && npm run build"
+    startCommand: "npm start"
+
+    # --- Environment Variables ---
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        # This is a best practice from the docs: let Render generate a secure secret.
+        generateValue: true
+      - key: DATABASE_URL
+        # This correctly links to the 'attendance-db' defined in the 'databases' section below.
+        fromDatabase:
+          name: attendance-db
+          property: connectionString
+
+databases:
+  # This is your PostgreSQL Database
+  - name: attendance-db
+    plan: free
+    # We specify the internal database name that your app expects.
+    databaseName: attendance_db

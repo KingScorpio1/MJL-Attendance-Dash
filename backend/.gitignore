@@ -1,0 +1,4 @@
+# File: backend/.gitignore
+
+node_modules
+.env
