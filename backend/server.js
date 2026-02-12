@@ -59,10 +59,13 @@ app.get('/api/health', (req, res) => {
 
 // Serve static frontend files in production
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../../frontend/build')));
+  // THE FIX: Go up one level (..) then into frontend/build
+  const buildPath = path.join(__dirname, '../frontend/build');
+
+  app.use(express.static(buildPath));
 
   app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../../frontend/build', 'index.html'));
+    res.sendFile(path.resolve(buildPath, 'index.html'));
   });
 }
 
